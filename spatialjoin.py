@@ -100,7 +100,8 @@ class spatialJoin:
                 item.setCheckState(Qt.Unchecked)
                 item.setText("")
                 #set first column as checkbox
-                self.dlg.attributesTable.setItem(idx,0,item)
+                if field.name()[0:5] != 'sjrif':
+                    self.dlg.attributesTable.setItem(idx,0,item)
                 #set second colunm as attribute label
                 self.dlg.attributesTable.setItem(idx,1,QTableWidgetItem(field.name()))
                 idx += 1
@@ -139,17 +140,26 @@ class spatialJoin:
             if not 'sjid' in sourceLayerFields:
                 sourceLayer.addExpressionField('$id', QgsField('sjid', QVariant.Int))
                 sourceLayer.updateFields()
-            if 'sjrif' in destLayerFields:
-                destLayer.removeExpressionField(destLayer.pendingFields().fieldNameIndex('sjrif'))
+            joinField = 'sjrif_'+destLayer.name()
+            if joinField in destLayerFields:
+                destLayer.dataProvider().deleteAttributes([destLayer.pendingFields().fieldNameIndex(joinField)])
                 destLayer.updateFields()
-            exp = "geom"+self.dlg.spatialTypeCombo.currentText()+"('"+sourceLayer.name()+"','sjid')"
-            destLayer.addExpressionField(exp, QgsField('sjrif', QVariant.Int))
+            exp = QgsExpression("geom"+self.dlg.spatialTypeCombo.currentText()+"('"+sourceLayer.name()+"','sjid')")
+            exp.prepare(destLayer.pendingFields())
+            
+            #destLayer.addExpressionField(exp, QgsField('sjrif', QVariant.Int))
+            destLayer.dataProvider().addAttributes([QgsField(joinField, QVariant.Int)])
             destLayer.updateFields()
+            for feature in destLayer.getFeatures():
+                destLayer.dataProvider().changeAttributeValues({ feature.id() : {destLayer.pendingFields().fieldNameIndex(joinField):exp.evaluate(feature)} })
+                #feature['sjrif'] = exp.evaluate(feature)
+            
             join = QgsVectorJoinInfo()
-            join.targetFieldName = "sjrif"
+            join.targetFieldName = joinField
             join.joinLayerId = sourceLayer.id()
             join.joinFieldName = "sjid"
             join.memoryCache = True
+            join.setJoinFieldNamesSubset(selectedFields)
             destLayer.addJoin(join)
 
 
