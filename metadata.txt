@@ -10,7 +10,7 @@
 
 [general]
 name=spatialJoin
-qgisMinimumVersion=2.0
+qgisMinimumVersion=2.6
 description=spatialJoin
 version=0.1
 author=Enrico Ferreguti

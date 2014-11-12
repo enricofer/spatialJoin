@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>256</width>
-    <height>398</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,12 +17,12 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Destination Layer</string>
+      <string>Target Layer</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="destLayerCombo"/>
+    <widget class="QComboBox" name="targetLayerCombo"/>
    </item>
    <item>
     <widget class="QLabel" name="label_3">
@@ -42,7 +42,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="sourceLayerCombo"/>
+    <widget class="QComboBox" name="joinLayerCombo"/>
    </item>
    <item>
     <widget class="QLabel" name="label_4">
@@ -71,12 +71,35 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="checkDynamicJoin">
+     <property name="text">
+      <string>Dynamic join</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+     </property>
+     <property name="textVisible">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

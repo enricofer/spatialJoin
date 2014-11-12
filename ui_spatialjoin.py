@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_spatialjoin.ui'
+# Form implementation generated from reading ui file 'D:\documenti\dev\spatialJoin\ui_spatialjoin.ui'
 #
-# Created: Tue Nov 11 15:57:43 2014
+# Created: Wed Nov 12 13:46:44 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,15 +17,15 @@ except AttributeError:
 class Ui_spatialJoin(object):
     def setupUi(self, spatialJoin):
         spatialJoin.setObjectName(_fromUtf8("spatialJoin"))
-        spatialJoin.resize(256, 398)
+        spatialJoin.resize(256, 431)
         self.verticalLayout = QtGui.QVBoxLayout(spatialJoin)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.label = QtGui.QLabel(spatialJoin)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.destLayerCombo = QtGui.QComboBox(spatialJoin)
-        self.destLayerCombo.setObjectName(_fromUtf8("destLayerCombo"))
-        self.verticalLayout.addWidget(self.destLayerCombo)
+        self.targetLayerCombo = QtGui.QComboBox(spatialJoin)
+        self.targetLayerCombo.setObjectName(_fromUtf8("targetLayerCombo"))
+        self.verticalLayout.addWidget(self.targetLayerCombo)
         self.label_3 = QtGui.QLabel(spatialJoin)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout.addWidget(self.label_3)
@@ -35,9 +35,9 @@ class Ui_spatialJoin(object):
         self.label_2 = QtGui.QLabel(spatialJoin)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout.addWidget(self.label_2)
-        self.sourceLayerCombo = QtGui.QComboBox(spatialJoin)
-        self.sourceLayerCombo.setObjectName(_fromUtf8("sourceLayerCombo"))
-        self.verticalLayout.addWidget(self.sourceLayerCombo)
+        self.joinLayerCombo = QtGui.QComboBox(spatialJoin)
+        self.joinLayerCombo.setObjectName(_fromUtf8("joinLayerCombo"))
+        self.verticalLayout.addWidget(self.joinLayerCombo)
         self.label_4 = QtGui.QLabel(spatialJoin)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.verticalLayout.addWidget(self.label_4)
@@ -51,9 +51,19 @@ class Ui_spatialJoin(object):
         self.attributesTable.verticalHeader().setDefaultSectionSize(20)
         self.attributesTable.verticalHeader().setMinimumSectionSize(15)
         self.verticalLayout.addWidget(self.attributesTable)
+        self.checkDynamicJoin = QtGui.QCheckBox(spatialJoin)
+        self.checkDynamicJoin.setObjectName(_fromUtf8("checkDynamicJoin"))
+        self.verticalLayout.addWidget(self.checkDynamicJoin)
+        self.progressBar = QtGui.QProgressBar(spatialJoin)
+        self.progressBar.setProperty(_fromUtf8("value"), 0)
+        self.progressBar.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.progressBar.setTextVisible(True)
+        self.progressBar.setObjectName(_fromUtf8("progressBar"))
+        self.verticalLayout.addWidget(self.progressBar)
         self.buttonBox = QtGui.QDialogButtonBox(spatialJoin)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setCenterButtons(False)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -64,8 +74,9 @@ class Ui_spatialJoin(object):
 
     def retranslateUi(self, spatialJoin):
         spatialJoin.setWindowTitle(QtGui.QApplication.translate("spatialJoin", "spatialJoin", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("spatialJoin", "Destination Layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("spatialJoin", "Target Layer", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("spatialJoin", "Spatial join type", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("spatialJoin", "Layer to Join", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("spatialJoin", "Attributes to join", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkDynamicJoin.setText(QtGui.QApplication.translate("spatialJoin", "Dynamic join", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -23,12 +23,24 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
+from qgis.utils import plugins
 # Initialize Qt resources from file resources.py
 import resources_rc
 # Import the code for the dialog
 from spatialjoindialog import spatialJoinDialog
 import os.path
 
+class trace:
+    """
+    class for tracing debug infos
+    """
+
+    def __init__(self):
+        self.trace = True
+        
+    def ce(self,string):
+        if self.trace:
+            print string
 
 class spatialJoin:
 
@@ -50,6 +62,7 @@ class spatialJoin:
 
         # Create the dialog (after translation) and keep reference
         self.dlg = spatialJoinDialog()
+        self.tra = trace()
 
     def initGui(self):
         # Create action that will start plugin configuration
@@ -62,7 +75,7 @@ class spatialJoin:
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.action)
         self.iface.addPluginToMenu(u"&spatialJoin", self.action)
-        self.dlg.sourceLayerCombo.activated.connect(self.updateAttributeTable)
+        self.dlg.joinLayerCombo.activated.connect(self.updateAttributeTable)
         self.dlg.buttonBox.accepted.connect(self.applyJoin)
 
     def unload(self):
@@ -84,13 +97,19 @@ class spatialJoin:
             model.sort(0)
         combo.setModel(model)
         if predef != "":
-            combo.insertItem(0,predef)
-            combo.setCurrentIndex(0)
+            for row in range (0,combo.count()):
+                if combo.itemText(row) == predef:
+                    pos = row
+            try:
+                combo.setCurrentIndex(pos)
+            except:
+                combo.insertItem(0,predef)
+                combo.setCurrentIndex(0)
 
     def updateAttributeTable(self):
-        if self.dlg.sourceLayerCombo.currentText()[:6] != 'Select' and self.dlg.sourceLayerCombo.currentText() in self.layerSet.keys():
+        if self.dlg.joinLayerCombo.currentText()[:6] != 'Select' and self.dlg.joinLayerCombo.currentText() in self.layerSet.keys():
             idx = 0
-            fields = [field for field in self.layerSet[self.dlg.sourceLayerCombo.currentText()].pendingFields()]
+            fields = [field for field in self.layerSet[self.dlg.joinLayerCombo.currentText()].pendingFields()]
             self.dlg.attributesTable.clear()
             self.dlg.attributesTable.setRowCount(len(fields))
             self.dlg.attributesTable.setColumnCount(2)
@@ -122,44 +141,74 @@ class spatialJoin:
 
     # run method that performs all the real work
     def run(self):
+        if not 'refFunctions' in plugins:
+            QMessageBox.critical(None, "Plugin Dependency:", "Plugin 'refFunctions' is needed.\nInstall it from Qgis repository before performing spatial joins")
+            return
         self.layerSet = {layer.name():layer for layer in self.iface.legendInterface().layers()}
-        self.populateComboBox(self.dlg.destLayerCombo,self.layerSet.keys())
-        self.populateComboBox(self.dlg.sourceLayerCombo,self.layerSet.keys(),'Select Layer to spatial join')
+        self.dlg.attributesTable.clear()
+        self.dlg.progressBar.reset()
+        if self.iface.legendInterface().currentLayer():
+            cLayerName = self.iface.legendInterface().currentLayer().name()
+        else:
+            cLayerName = ""
+        self.populateComboBox(self.dlg.targetLayerCombo,self.layerSet.keys(),cLayerName)
+        self.populateComboBox(self.dlg.joinLayerCombo,self.layerSet.keys(),'Select Layer to spatial join')
         self.populateComboBox(self.dlg.spatialTypeCombo,['nearest','within','contains','crosses','disjoint','equals','intersects','overlaps','touches'],'Select spatial Join type',None)
-
         # show the dialog
         self.dlg.show()
 
     def applyJoin(self):
+        self.dlg.show()
         selectedFields = self.getSelFieldList()
-        if selectedFields and self.dlg.destLayerCombo.currentText()[:6] != 'Select' and self.dlg.sourceLayerCombo.currentText()[:6] != 'Select' and self.dlg.spatialTypeCombo.currentText()[:6] != 'Select':
-            destLayer = self.layerSet[self.dlg.destLayerCombo.currentText()]
-            sourceLayer = self.layerSet[self.dlg.sourceLayerCombo.currentText()]
-            sourceLayerFields = [field.name() for field in sourceLayer.pendingFields()]
-            destLayerFields = [field.name() for field in destLayer.pendingFields()]
-            if not 'sjid' in sourceLayerFields:
-                sourceLayer.addExpressionField('$id', QgsField('sjid', QVariant.Int))
-                sourceLayer.updateFields()
-            joinField = 'sjrif_'+destLayer.name()
-            if joinField in destLayerFields:
-                destLayer.dataProvider().deleteAttributes([destLayer.pendingFields().fieldNameIndex(joinField)])
-                destLayer.updateFields()
-            exp = QgsExpression("geom"+self.dlg.spatialTypeCombo.currentText()+"('"+sourceLayer.name()+"','sjid')")
-            exp.prepare(destLayer.pendingFields())
+        if selectedFields and self.dlg.targetLayerCombo.currentText()[:6] != 'Select' and self.dlg.joinLayerCombo.currentText()[:6] != 'Select' and self.dlg.spatialTypeCombo.currentText()[:6] != 'Select':
+            targetLayer = self.layerSet[self.dlg.targetLayerCombo.currentText()]
+            joinLayer = self.layerSet[self.dlg.joinLayerCombo.currentText()]
+            joinLayerFields = [field.name() for field in joinLayer.pendingFields()]
+            #targetLayerFields = [field.name() for field in targetLayer.pendingFields()]
+            targetLayerFields = []
+            for field in targetLayer.pendingFields():
+                if field.name()[0:7] == 'spjoin_':
+                    idx = targetLayer.pendingFields().fieldNameIndex(field.name())
+                    self.tra.ce("removing:"+field.name()+str(idx))
+                    targetLayer.dataProvider().deleteAttributes([idx])
+                    targetLayer.removeExpressionField(idx)
+                else:
+                    targetLayerFields.append(field.name())
+            targetLayer.updateFields()
+            joinField = 'spjoin_rif'
+            exp = "geom"+self.dlg.spatialTypeCombo.currentText()+"('"+joinLayer.name()+"','$id')"
+            self.tra.ce( exp)
+            if self.dlg.checkDynamicJoin.checkState() == Qt.Checked:
+                targetLayer.addExpressionField(exp, QgsField(joinField, QVariant.Int))
+            else:
+                targetLayer.dataProvider().addAttributes([QgsField(joinField, QVariant.Int)])
+                targetLayer.updateFields()
+                F = [field.name() for field in targetLayer.dataProvider().fields()]
+                self.tra.ce( F)
+                expObj = QgsExpression(exp)
+                expObj.prepare(targetLayer.pendingFields())
+                idx = targetLayer.dataProvider().fields().fieldNameIndex(joinField)
+                self.tra.ce( "new " + joinField + str(idx))
+                changes = {}
+                self.dlg.progressBar.setMinimum(0)
+                self.dlg.progressBar.setMaximum(targetLayer.featureCount())
+                count = 0
+                for feature in targetLayer.getFeatures():
+                    self.dlg.progressBar.setValue(count)
+                    value = expObj.evaluate(feature)
+                    if value:
+                        changes[feature.id()] = {idx:value}
+                    count +=1
+                self.tra.ce( changes)
+                targetLayer.dataProvider().changeAttributeValues(changes)
+            targetLayer.updateFields()
             
-            #destLayer.addExpressionField(exp, QgsField('sjrif', QVariant.Int))
-            destLayer.dataProvider().addAttributes([QgsField(joinField, QVariant.Int)])
-            destLayer.updateFields()
-            for feature in destLayer.getFeatures():
-                destLayer.dataProvider().changeAttributeValues({ feature.id() : {destLayer.pendingFields().fieldNameIndex(joinField):exp.evaluate(feature)} })
-                #feature['sjrif'] = exp.evaluate(feature)
-            
-            join = QgsVectorJoinInfo()
-            join.targetFieldName = joinField
-            join.joinLayerId = sourceLayer.id()
-            join.joinFieldName = "sjid"
-            join.memoryCache = True
-            join.setJoinFieldNamesSubset(selectedFields)
-            destLayer.addJoin(join)
+            for f in selectedFields:
+                fieldType = joinLayer.pendingFields().field(f).type()
+                exp = """dbvaluebyid('%s','%s',"%s")""" %(joinLayer.name(),f,joinField)
+                self.tra.ce(exp)
+                targetLayer.addExpressionField(exp, QgsField('spjoin_'+f, fieldType))
+            targetLayer.updateFields()
+            self.dlg.hide()
 
 
