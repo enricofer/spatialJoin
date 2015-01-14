@@ -1,34 +1,8 @@
-Plugin Builder Results
-
-Your plugin spatialJoin was created in:
-    D:/documenti/dev\spatialJoin
-
-Your QGIS plugin directory is located at:
-    C:/Documents and Settings/ferregutie/.qgis2/python/plugins
-
-What's Next:
-
-  * Copy the entire directory containing your new plugin to the QGIS plugin
-    directory
-
-  * Compile the ui file using pyuic4
-
-  * Compile the resources file using pyrcc4
-
-  * Test the plugin by enabling it in the QGIS plugin manager
-
-  * Customize it by editing the implementation file:
-         spatialjoin.py
-
-  * Create your own custom icon, replacing the default icon.png
-
-  * Modify your user interface by opening spatialjoin.ui
-    in Qt Designer (don't forget to compile it with pyuic4 after changing it)
-
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
-
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
-
-(C) 2011-2014 GeoApt LLC - geoapt.com
+The "spatial join" is an operation that allow to combine the attributes of two geometric layers when  they meet a given topological condition (for example when the feature of one in contained by a feature of the other).
+This is a basic function of many GIS systems. In QGIS there is a command in processing toolbox or in vector menu called "Join by location" that allow to create a new layer from the intersection of two existing layers.
+The new plugin called "SpatialJoin" is aimed to perform spatial joins without creating a new table, using the full set of available tolological condition. This is done exploiting the new expression fields feature, available from release 2.6.
+The plugin, using the "refFunction" expressions extension, needed as dependency, creates a expression spatial key field ("spjoin_rif") based on reference functions and joins the desidered fields with a value by id function in expression fields as well.
+The result is a complete dynamic table that resolvs spatial joins on the fly, evaluating the current layers features. All the plugin newly added fields  are signed with a "spjoin_" suffix
+Dynamic joins are very computational insensive, so it's recomended to test them with small datasets to avoid long waiting for results. 
+As alternative it's possible, unchecking the dynamic join option, to create a new static field to improve performance. 
+Furthermore, there is a last experimental option that allows to build up relation based on the two table join.
