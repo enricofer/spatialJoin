@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\documenti\dev\spatialJoin\ui_spatialjoin.ui'
 #
-# Created: Wed Nov 12 13:46:44 2014
+# Created: Thu Nov 13 11:57:35 2014
 #      by: PyQt4 UI code generator 4.8.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -54,6 +54,9 @@ class Ui_spatialJoin(object):
         self.checkDynamicJoin = QtGui.QCheckBox(spatialJoin)
         self.checkDynamicJoin.setObjectName(_fromUtf8("checkDynamicJoin"))
         self.verticalLayout.addWidget(self.checkDynamicJoin)
+        self.checkBuildRelation = QtGui.QCheckBox(spatialJoin)
+        self.checkBuildRelation.setObjectName(_fromUtf8("checkBuildRelation"))
+        self.verticalLayout.addWidget(self.checkBuildRelation)
         self.progressBar = QtGui.QProgressBar(spatialJoin)
         self.progressBar.setProperty(_fromUtf8("value"), 0)
         self.progressBar.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
@@ -79,4 +82,5 @@ class Ui_spatialJoin(object):
         self.label_2.setText(QtGui.QApplication.translate("spatialJoin", "Layer to Join", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("spatialJoin", "Attributes to join", None, QtGui.QApplication.UnicodeUTF8))
         self.checkDynamicJoin.setText(QtGui.QApplication.translate("spatialJoin", "Dynamic join", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBuildRelation.setText(QtGui.QApplication.translate("spatialJoin", "Build Relation", None, QtGui.QApplication.UnicodeUTF8))
 

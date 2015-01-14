@@ -78,6 +78,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="checkBuildRelation">
+     <property name="text">
+      <string>Build Relation</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QProgressBar" name="progressBar">
      <property name="value">
       <number>0</number>
