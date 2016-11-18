@@ -38,11 +38,12 @@ class trace:
     """
 
     def __init__(self):
-        self.trace = True
-        
+        self.trace = False
+
     def ce(self,string):
         if self.trace:
-            print string
+            s = repr(string).decode('utf8')
+            print(s)
 
 class spatialJoin:
 
@@ -164,8 +165,8 @@ class spatialJoin:
 
     def applyJoin(self):
         self.dlg.show()
-        selectedFields = self.getSelFieldList()
-        if selectedFields and self.dlg.targetLayerCombo.currentText()[:6] != 'Select' and self.dlg.joinLayerCombo.currentText()[:6] != 'Select' and self.dlg.spatialTypeCombo.currentText()[:6] != 'Select':
+        selectedFields = self.getSelFieldList() or []
+        if self.dlg.targetLayerCombo.currentText()[:6] != 'Select' and self.dlg.joinLayerCombo.currentText()[:6] != 'Select' and self.dlg.spatialTypeCombo.currentText()[:6] != 'Select':
             targetLayer = self.layerSet[self.dlg.targetLayerCombo.currentText()]
             joinLayer = self.layerSet[self.dlg.joinLayerCombo.currentText()]
             joinLayerFields = [field.name() for field in joinLayer.pendingFields()]
@@ -204,7 +205,7 @@ class spatialJoin:
                 targetLayer.dataProvider().addAttributes([QgsField(joinField, QVariant.Int)])
                 #targetLayer.updateFields()
                 F = [field.name() for field in targetLayer.dataProvider().fields()]
-                self.tra.ce( F)
+                self.tra.ce(F)
                 #Compile spatial expression to get feature rifs
                 expObj = QgsExpression(exp)
                 expObj.prepare(targetLayer.pendingFields())
@@ -214,15 +215,12 @@ class spatialJoin:
                 #init progress bar
                 self.dlg.progressBar.setMinimum(0)
                 self.dlg.progressBar.setMaximum(targetLayer.featureCount())
-                count = 0
                 #cicle into feature to build mod vector
-                for feature in targetLayer.getFeatures():
+                for count, feature in enumerate(targetLayer.getFeatures()):
                     self.dlg.progressBar.setValue(count)
                     value = expObj.evaluate(feature)
-                    if value:
-                        changes[feature.id()] = {idx:value}
-                    count +=1
-                self.tra.ce( changes)
+                    changes[feature.id()] = {idx:value}
+                self.tra.ce(changes)
                 #apply mod vector
                 targetLayer.dataProvider().changeAttributeValues(changes)
             targetLayer.updateFields()
