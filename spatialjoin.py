@@ -39,7 +39,7 @@ class trace:
 
     def __init__(self):
         self.trace = True
-        
+
     def ce(self,string):
         if self.trace:
             print string
