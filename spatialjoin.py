@@ -38,7 +38,7 @@ class trace:
     """
 
     def __init__(self):
-        self.trace = True
+        self.trace = False
 
     def ce(self,string):
         if self.trace:
