@@ -42,7 +42,8 @@ class trace:
 
     def ce(self,string):
         if self.trace:
-            print string
+            s = repr(string).decode('utf8')
+            print(s)
 
 class spatialJoin:
 
