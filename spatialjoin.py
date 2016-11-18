@@ -165,8 +165,8 @@ class spatialJoin:
 
     def applyJoin(self):
         self.dlg.show()
-        selectedFields = self.getSelFieldList()
-        if selectedFields and self.dlg.targetLayerCombo.currentText()[:6] != 'Select' and self.dlg.joinLayerCombo.currentText()[:6] != 'Select' and self.dlg.spatialTypeCombo.currentText()[:6] != 'Select':
+        selectedFields = self.getSelFieldList() or []
+        if self.dlg.targetLayerCombo.currentText()[:6] != 'Select' and self.dlg.joinLayerCombo.currentText()[:6] != 'Select' and self.dlg.spatialTypeCombo.currentText()[:6] != 'Select':
             targetLayer = self.layerSet[self.dlg.targetLayerCombo.currentText()]
             joinLayer = self.layerSet[self.dlg.joinLayerCombo.currentText()]
             joinLayerFields = [field.name() for field in joinLayer.pendingFields()]
