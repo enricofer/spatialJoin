@@ -12,7 +12,7 @@
 name=spatialJoin
 qgisMinimumVersion=2.6
 description= The plugin is aimed to perform spatial joins dynamically, without creating a new table, using expression fields and refFunctions plugin (needed as dependency). All the standard topological condition are available (intersection, within, touches ....))
-version=1.0
+version=1.1
 author=Enrico Ferreguti
 email=enricofer@gmail.com
 
@@ -21,7 +21,7 @@ email=enricofer@gmail.com
 # Optional items:
 
 # Uncomment the following line and add your changelog entries:
-# changelog=
+# changelog=1.1 Unicode and null value for $id=0 (courtesy of @SzieberthAdam)
 
 # tags are comma separated with spaces allowed
 tags= spatial join, relations, expression fields, vector. attributes, intersection, nearest, touches, within, refFunctions, spatialjoin, joins, spatial, join
